@@ -1,0 +1,123 @@
+---
+interface Props { slides?: { src?: string; alt?: string }[] }
+const { slides = [{}, {}, {}] } = Astro.props;
+---
+<section class="car" data-carousel aria-label="Featured gallery">
+  <button class="arrow prev" type="button" aria-label="Previous" data-prev>
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+  </button>
+
+  <div class="track" data-track>
+    {slides.map((s) => (
+      <div class="slide">{s.src && <img src={s.src} alt={s.alt ?? ''} loading="lazy" />}</div>
+    ))}
+  </div>
+
+  <button class="arrow next" type="button" aria-label="Next" data-next>
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+  </button>
+
+  <div class="dots">
+    {slides.map(() => <i data-dot></i>)}
+  </div>
+</section>
+
+<script>
+  let ctrl: AbortController | undefined;
+  document.addEventListener('astro:page-load', () => {
+  ctrl?.abort();
+  ctrl = new AbortController();
+  const { signal } = ctrl;
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-track]')!;
+    const dots = [...root.querySelectorAll<HTMLElement>('[data-dot]')];
+    const count = dots.length;
+    const index = () => Math.round(track.scrollLeft / track.clientWidth);
+    const go = (i: number, smooth = true) =>
+      track.scrollTo({ left: Math.max(0, Math.min(count - 1, i)) * track.clientWidth, behavior: smooth ? 'smooth' : 'auto' });
+    const sync = () => dots.forEach((d, i) => d.classList.toggle('on', i === index()));
+
+    root.querySelector('[data-prev]')!.addEventListener('click', () => go(index() - 1));
+    root.querySelector('[data-next]')!.addEventListener('click', () => go(index() + 1));
+    track.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', () => go(index(), false), { signal });
+
+    // wait for styles/layout so clientWidth is real, then open on the middle slide
+    const start = () => { go(Math.min(1, count - 1), false); sync(); };
+    if (document.readyState === 'complete') start();
+    else window.addEventListener('load', start, { once: true });
+  });
+  });
+</script>
+
+<style>
+  .car {
+    position: relative;
+    margin: calc(var(--g) * 51) calc(var(--g) * 84) 0;
+    animation: rise-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s both;
+  }
+  .track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    border-radius: calc(var(--g) * 35);
+  }
+  .track::-webkit-scrollbar { display: none; }
+  .slide {
+    flex: 0 0 100%;
+    height: calc(var(--g) * 285);
+    scroll-snap-align: center;
+    background: #d9d9d9;
+  }
+  .slide img { width: 100%; height: 100%; object-fit: cover; animation: img-in 0.6s ease both; }
+  @keyframes img-in { from { opacity: 0; } to { opacity: 1; } }
+
+  .arrow {
+    position: absolute;
+    top: 50%;
+    width: calc(var(--g) * 31);
+    height: calc(var(--g) * 31);
+    margin-top: calc(var(--g) * -15.5);
+    border: 0;
+    border-radius: 50%;
+    background: var(--red);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .arrow svg { width: 58%; }
+  .arrow:hover { transform: scale(1.12); background: #cf431b; }
+  .arrow:active { transform: scale(0.94); }
+  .prev { left: calc(var(--g) * -42); }
+  .next { right: calc(var(--g) * -42); }
+
+  .dots {
+    position: absolute;
+    top: calc(100% + var(--g) * 18);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: calc(var(--g) * 4);
+  }
+  .dots i {
+    width: calc(var(--g) * 9);
+    height: calc(var(--g) * 5);
+    border-radius: calc(var(--g) * 3);
+    background: #d9d9d9;
+    transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.3s ease;
+  }
+  .dots i.on { width: calc(var(--g) * 106); background: #cfcfcf; }
+
+  @media (max-width: 640px) {
+    .car { margin: calc(var(--g) * 20) calc(var(--g) * var(--car-mx, 43)) 0; }
+    .track { border-radius: calc(var(--g) * 22); }
+    .slide { height: calc(var(--g) * var(--car-h, 145)); }
+    .arrow { width: calc(var(--g) * 16); height: calc(var(--g) * 16); margin-top: calc(var(--g) * -8); }
+    .prev { left: calc(var(--g) * -21); }
+    .next { right: calc(var(--g) * -21); }
+    .dots { top: calc(100% + var(--g) * 10); gap: calc(var(--g) * 3); }
+    .dots i { width: calc(var(--g) * 5); height: calc(var(--g) * 3); }
+    .dots i.on { width: calc(var(--g) * 60); }
+  }
+</style>

@@ -1,0 +1,92 @@
+---
+import type { DownloadSection } from '../data/downloads';
+import DownloadCard from './DownloadCard.astro';
+interface Props { section: DownloadSection }
+const { section } = Astro.props;
+---
+<section class="sec">
+  <h2 class="tab"><span>{section.title}</span></h2>
+  <div class="panel">
+    <div class="grid">
+      {section.items.map((item, i) => (
+        <DownloadCard item={item} variant={i % 2 === 0 ? 'red' : 'yellow'} />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .sec { margin: 0 calc(var(--u) * 42); animation: rise-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s both; }
+  .sec:nth-child(2) { animation-delay: 0.65s; }
+  .sec:nth-child(n + 3) { animation-delay: 0.8s; }
+  .sec + .sec { margin-top: calc(var(--u) * 24); }
+  .tab {
+    position: relative;
+    width: calc(var(--u) * 286);
+    height: calc(var(--u) * 37);
+    margin: 0 auto;
+    display: grid;
+    place-items: center;
+    padding-top: calc(var(--u) * 8);
+    background: var(--grey);
+    border-radius: calc(var(--u) * 26) calc(var(--u) * 26) 0 0;
+    font-size: calc(var(--u) * 26);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  /* concave fillets where the tab meets the panel */
+  .tab::before,
+  .tab::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    width: calc(var(--u) * 20);
+    height: calc(var(--u) * 20);
+  }
+  .tab::before {
+    left: calc(var(--u) * -20);
+    background: radial-gradient(circle at 0 0, transparent calc(var(--u) * 20), var(--grey) calc(var(--u) * 20.5));
+  }
+  .tab::after {
+    right: calc(var(--u) * -20);
+    background: radial-gradient(circle at 100% 0, transparent calc(var(--u) * 20), var(--grey) calc(var(--u) * 20.5));
+  }
+  .panel {
+    background: var(--grey);
+    border-radius: calc(var(--u) * 30);
+    padding: calc(var(--u) * 38) calc(var(--u) * 57) calc(var(--u) * 22);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: calc(var(--u) * 14);
+  }
+
+  /* smaller cards inside the panel on desktop; --k is the page scale set by .list */
+  @media (min-width: 641px) {
+    .grid {
+      --u: calc(var(--k, var(--u)) * 0.85);
+      grid-template-columns: repeat(4, calc(var(--u) * 148));
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .sec { margin: 0 calc(var(--u) * 35); }
+    .sec + .sec { margin-top: calc(var(--u) * 30); }
+    .tab {
+      width: calc(var(--u) * 125);
+      height: calc(var(--u) * 36);
+      padding-top: calc(var(--u) * 6);
+      font-size: calc(var(--u) * 15);
+      border-radius: calc(var(--u) * 16) calc(var(--u) * 16) 0 0;
+    }
+    .tab::before, .tab::after { display: none; }
+    .panel {
+      border-radius: calc(var(--u) * 24);
+      padding: calc(var(--u) * 20) calc(var(--u) * 22) calc(var(--u) * 22);
+    }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: calc(var(--u) * 15); }
+  }
+</style>

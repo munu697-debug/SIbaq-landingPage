@@ -1,0 +1,95 @@
+---
+import type { UpdateCard } from '../data/updates';
+import UpdateBadge from './UpdateBadge.astro';
+interface Props { cards: UpdateCard[] }
+const { cards } = Astro.props;
+const variants = ['red', 'yellow', 'red'];
+---
+<section class="cards" aria-label="Latest updates">
+  {cards.map((c, i) => (
+    <article class={`item ${variants[i % variants.length]}`} style={`--i:${i}`}>
+      <a class="card" href={c.url}>
+        <span class="img">{c.image && <img src={c.image} alt="" loading="lazy" />}</span>
+        <span class="info">
+          <span class="badge"><UpdateBadge id={`upd-card-${c.id}`} /></span>
+          <span class="title">{c.title}</span>
+          <span class="when">{c.updated}</span>
+        </span>
+      </a>
+      <a class="more" href={c.url}>
+        <span>View More</span>
+        <i><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 14L14 6M7 6h7v7" /></svg></i>
+      </a>
+    </article>
+  ))}
+</section>
+
+<style>
+  .cards {
+    margin: calc(var(--g) * 70) calc(var(--g) * 45) 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(var(--g) * 14);
+  }
+  .item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--g) * 14);
+    animation: rise-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) calc(0.7s + var(--i) * 0.12s) both;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    aspect-ratio: 222 / 345;
+    border-radius: calc(var(--g) * 35);
+    overflow: hidden;
+    background: #d9d9d9;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+  }
+  .card:hover { transform: translateY(-5px); box-shadow: 0 10px 22px rgb(0 0 0 / 0.16); }
+  .card:active { transform: translateY(-1px) scale(0.98); }
+  .img { flex: 1; background: #d9d9d9; overflow: hidden; }
+  .img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .card:hover .img img { transform: scale(1.06); }
+  .info { position: relative; flex: none; height: 38%; padding: calc(var(--g) * 50) calc(var(--g) * 22) 0; color: #fff; display: flex; flex-direction: column; align-items: flex-start; }
+  .red .info { background: var(--red); }
+  .yellow .info { background: var(--yellow); }
+  .badge { position: absolute; top: calc(var(--g) * -30); left: 50%; width: calc(var(--g) * 60); aspect-ratio: 1; display: block; transform: translateX(-50%); transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .card:hover .badge { transform: translateX(-50%) rotate(-12deg) scale(1.06); }
+  .title { font-size: calc(var(--g) * 26); font-weight: 700; line-height: 1.02; max-width: 5.5em; }
+  .when { margin-top: calc(var(--g) * 6); font-size: calc(var(--g) * 8); opacity: 0.9; }
+
+  .more {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--g) * 10);
+    height: calc(var(--g) * 30);
+    padding: 0 calc(var(--g) * 4) 0 calc(var(--g) * 16);
+    border-radius: calc(var(--g) * 15);
+    background: var(--red);
+    color: #fff;
+    font-size: calc(var(--g) * 11);
+    font-weight: 700;
+  }
+  .more i { width: calc(var(--g) * 22); height: calc(var(--g) * 22); border-radius: 50%; background: #fff; display: grid; place-items: center; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .yellow .more i { background: #c93a12; }
+  .more svg { width: 60%; fill: none; stroke: var(--red); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .yellow .more svg { stroke: #fff; }
+  .more:hover { background: #cf431b; transform: translateY(-2px); }
+  .more:hover i { transform: translate(2px, -2px) rotate(8deg); }
+  .more:active { transform: scale(0.97); }
+
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; gap: calc(var(--g) * 40); margin: calc(var(--g) * 50) calc(var(--g) * 100) 0; }
+    .item { gap: calc(var(--g) * 16); }
+    .card { aspect-ratio: 128 / 201; border-radius: calc(var(--g) * 34); }
+    .info { height: 35%; padding: calc(var(--g) * 36) calc(var(--g) * 27) 0; }
+    .badge { width: calc(var(--g) * 56); top: calc(var(--g) * -28); }
+    .title { font-size: calc(var(--g) * 22); }
+    .when { font-size: calc(var(--g) * 7); margin-top: calc(var(--g) * 4); }
+    .more { height: calc(var(--g) * 24); font-size: calc(var(--g) * 9); padding-left: calc(var(--g) * 14); gap: calc(var(--g) * 8); border-radius: calc(var(--g) * 12); }
+    .more i { width: calc(var(--g) * 18); height: calc(var(--g) * 18); }
+  }
+</style>

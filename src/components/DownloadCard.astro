@@ -1,0 +1,73 @@
+---
+import type { DownloadItem } from '../data/downloads';
+interface Props { item: DownloadItem; variant: 'red' | 'yellow' }
+const { item, variant } = Astro.props;
+---
+<a class={`card ${variant}`} href={item.url} download>
+  <span class="icon"><picture><source srcset="/images/scroll.webp" type="image/webp" /><img src="/images/scroll.png" alt="" decoding="async" /></picture></span>
+  <span class="type">{item.type}</span>
+  <span class="title">{item.title}</span>
+  <span class="cat">{item.category}</span>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    aspect-ratio: 148 / 194;
+    border-radius: calc(var(--u) * 30);
+    padding: calc(var(--u) * 20) calc(var(--u) * 19) 0;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+  }
+  .card:hover { transform: translateY(calc(var(--u) * -5)); box-shadow: 0 calc(var(--u) * 10) calc(var(--u) * 20) rgb(0 0 0 / 0.16); }
+  .card:active { transform: translateY(calc(var(--u) * -1)) scale(0.98); box-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 8) rgb(0 0 0 / 0.14); }
+  .red { background: var(--red); }
+  .yellow { background: var(--yellow); }
+  .icon {
+    width: 100%;
+    height: calc(var(--u) * 85);
+    border-radius: calc(var(--u) * 14);
+    display: grid;
+    place-items: center;
+  }
+  .red .icon { background: var(--yellow); }
+  .yellow .icon { background: var(--red); }
+  .icon img { width: 46%; transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .card:hover .icon img { transform: scale(1.08) rotate(-3deg); }
+  .type {
+    margin-top: calc(var(--u) * 6);
+    width: 100%;
+    height: calc(var(--u) * 22);
+    display: grid;
+    place-items: center;
+    border-radius: calc(var(--u) * 4);
+    font-size: calc(var(--u) * 12.5);
+    font-weight: 700;
+    color: #fff;
+    background: rgb(255 255 255 / 0.4);
+  }
+  .title {
+    margin-top: calc(var(--u) * 10);
+    font-size: calc(var(--u) * 13.5);
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .cat {
+    margin-top: calc(var(--u) * 3);
+    font-size: calc(var(--u) * 7.5);
+    color: #fff;
+  }
+  @media (max-width: 640px) {
+    .card {
+      aspect-ratio: 136 / 180;
+      border-radius: calc(var(--u) * 24);
+      padding: calc(var(--u) * 17) calc(var(--u) * 17) 0;
+    }
+    .icon { height: calc(var(--u) * 83); border-radius: calc(var(--u) * 12); }
+    .type { margin-top: calc(var(--u) * 9); height: calc(var(--u) * 22); font-size: calc(var(--u) * 12); border-radius: calc(var(--u) * 5); }
+    .title { margin-top: calc(var(--u) * 11); font-size: calc(var(--u) * 13); }
+    .cat { margin-top: calc(var(--u) * 2); font-size: calc(var(--u) * 8); }
+  }
+</style>

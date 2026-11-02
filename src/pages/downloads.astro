@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DownloadsHeader from '../components/DownloadsHeader.astro';
+import DownloadSection from '../components/DownloadSection.astro';
+import { getDownloadSections } from '../data/downloads';
+
+const sections = await getDownloadSections();
+---
+<Layout title="Downloads | Sibaq National Arts Fest 26">
+  <DownloadsHeader />
+  <main class="list">
+    {sections.map((section) => <DownloadSection section={section} />)}
+  </main>
+</Layout>
+
+<style>
+  .list { margin-top: calc(var(--u) * 28); }
+  /* cap the scale on wide screens so cards don't grow oversized */
+  @media (min-width: 641px) {
+    .list {
+      /* panels match the header width; card scale follows the viewport height */
+      --k: calc(var(--hu) * 791 / 746);
+      --u: var(--k);
+      max-width: calc(var(--u) * 830);
+      margin-inline: auto;
+    }
+  }
+</style>

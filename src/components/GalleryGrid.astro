@@ -1,0 +1,44 @@
+---
+interface Props { items?: { src?: string; alt?: string }[] }
+const { items = Array.from({ length: 12 }, () => ({})) } = Astro.props;
+---
+<section class="grid" aria-label="Gallery">
+  {items.map((it) => (
+    <a class="item" href={it.src ?? '#'}>
+      {it.src && <img src={it.src} alt={it.alt ?? ''} loading="lazy" />}
+    </a>
+  ))}
+</section>
+
+<style>
+  .grid {
+    margin: calc(var(--g) * 70) calc(var(--g) * 45) 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: calc(var(--g) * 18) calc(var(--g) * 14);
+    animation: rise-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.7s both;
+  }
+  .item {
+    display: block;
+    aspect-ratio: 222 / 210;
+    border-radius: calc(var(--g) * 35);
+    background: #d9d9d9;
+    overflow: hidden;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+  }
+  .item:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgb(0 0 0 / 0.16); }
+  .item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); animation: img-in 0.6s ease both; }
+  .item:hover img { transform: scale(1.06); }
+  @keyframes img-in { from { opacity: 0; } to { opacity: 1; } }
+
+  @media (max-width: 640px) {
+    .grid {
+      margin: calc(var(--g) * 44) calc(var(--g) * 45) 0;
+      grid-template-columns: repeat(2, 1fr);
+      gap: calc(var(--g) * 13) calc(var(--g) * 10);
+    }
+    .item { aspect-ratio: 156 / 147; border-radius: calc(var(--g) * 22); }
+    /* mobile design shows 4 rows of 2 */
+    .item:nth-child(n + 9) { display: none; }
+  }
+</style>

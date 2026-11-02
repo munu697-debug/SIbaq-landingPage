@@ -1,0 +1,51 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GalleryHeader from '../components/GalleryHeader.astro';
+import GalleryCarousel from '../components/GalleryCarousel.astro';
+import GalleryGrid from '../components/GalleryGrid.astro';
+---
+<Layout title="Gallery | Sibaq National Arts Fest 26">
+  <div class="gal">
+    <GalleryHeader />
+    <main>
+      <GalleryCarousel />
+      <GalleryGrid />
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .gal {
+    --g: calc(100cqw / 783);
+    position: relative;
+    isolation: isolate;
+    display: flow-root; /* keep the hero's top margin inside, so the pattern starts at the very top */
+  }
+  /* faint multicolour fingerprint pattern behind the whole page */
+  .gal::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(160deg, #e8501f 0%, #f3b91a 28%, #5cbf7b 52%, #f3b91a 74%, #e8501f 100%);
+    -webkit-mask: url('/images/pattern-fingerprint.png') center top / 100% auto repeat-y;
+    mask: url('/images/pattern-fingerprint.png') center top / 100% auto repeat-y;
+    -webkit-mask-image: image-set(url('/images/pattern-fingerprint.webp') type('image/webp'), url('/images/pattern-fingerprint.png') type('image/png'));
+    mask-image: image-set(url('/images/pattern-fingerprint.webp') type('image/webp'), url('/images/pattern-fingerprint.png') type('image/png'));
+    opacity: 0.1;
+  }
+  main { display: block; padding-bottom: calc(var(--g) * 34); }
+
+  /* desktop: same content width and scale as the downloads panels */
+  @media (min-width: 641px) {
+    main {
+      --g: calc(var(--hu) * 791 / 783);
+      max-width: calc(var(--g) * 783);
+      margin-inline: auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .gal { --g: calc(100cqw / 402); }
+  }
+</style>

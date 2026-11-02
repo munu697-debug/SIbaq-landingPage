@@ -1,0 +1,20 @@
+---
+interface Props { id: string; spin?: boolean }
+const { id, spin = false } = Astro.props;
+---
+<svg class={`bdg${spin ? ' spin' : ''}`} viewBox="0 0 200 200" aria-hidden="true">
+  <circle cx="100" cy="100" r="100" fill="#f3b91a" />
+  <path id={id} d="M 30,100 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0" fill="none" />
+  <text class="ring" font-size="20" font-weight="700" fill="#2b2b2b" font-family="Azurio, Playfair Display, serif">
+    <textPath href={`#${id}`} textLength="432" lengthAdjust="spacing">NATIONAL ARTS FEST '26 DARUL HUDA SIBAQ</textPath>
+  </text>
+  <circle cx="100" cy="100" r="54" fill="#e8501f" />
+  <image href="/images/mark-white.webp" x="76" y="62" width="48" height="76" preserveAspectRatio="xMidYMid meet" />
+</svg>
+
+<style>
+  .bdg { width: 100%; height: 100%; display: block; }
+  .spin .ring { transform-box: view-box; transform-origin: 50% 50%; animation: ring-spin 18s linear infinite; }
+  @keyframes ring-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin .ring { animation: none; } }
+</style>

@@ -1,0 +1,61 @@
+---
+import type { FeaturedUpdate } from '../data/updates';
+import GalleryCarousel from './GalleryCarousel.astro';
+interface Props { update: FeaturedUpdate }
+const { update } = Astro.props;
+---
+<article class="feat">
+  <GalleryCarousel slides={update.images} />
+  <div class="text">
+    <p class="when">{update.updated}</p>
+    <h2>{update.title}</h2>
+    <p class="body">{update.excerpt}</p>
+    <a class="more" href={update.url}>
+      <span>View More</span>
+      <i><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 14L14 6M7 6h7v7" /></svg></i>
+    </a>
+  </div>
+</article>
+
+<style>
+  /* phone design: narrower, taller slide than the gallery carousel */
+  .feat { --car-mx: 63; --car-h: 182; }
+  .text { margin: calc(var(--g) * 52) calc(var(--g) * 120) 0; text-align: center; animation: rise-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.65s both; }
+  .when { font-size: calc(var(--g) * 9); color: #aaa; }
+  h2 {
+    margin-top: calc(var(--g) * 12);
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: calc(var(--g) * 24);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--red);
+  }
+  .body { margin-top: calc(var(--g) * 20); font-size: calc(var(--g) * 12.5); line-height: 1.55; color: #444; }
+  .more {
+    margin-top: calc(var(--g) * 20);
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--g) * 10);
+    height: calc(var(--g) * 30);
+    padding: 0 calc(var(--g) * 4) 0 calc(var(--g) * 16);
+    border-radius: calc(var(--g) * 15);
+    background: var(--red);
+    color: #fff;
+    font-size: calc(var(--g) * 11);
+    font-weight: 700;
+  }
+  .more i { width: calc(var(--g) * 22); height: calc(var(--g) * 22); border-radius: 50%; background: #fff; display: grid; place-items: center; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .more svg { width: 60%; fill: none; stroke: var(--red); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .more:hover { background: #cf431b; transform: translateY(-2px); }
+  .more:hover i { transform: translate(2px, -2px) rotate(8deg); }
+  .more:active { transform: scale(0.97); }
+
+  @media (max-width: 640px) {
+    .text { margin: calc(var(--g) * 34) calc(var(--g) * 60) 0; }
+    .when { font-size: calc(var(--g) * 7); }
+    h2 { font-size: calc(var(--g) * 16); margin-top: calc(var(--g) * 8); }
+    .body { font-size: calc(var(--g) * 10); margin-top: calc(var(--g) * 14); }
+    .more { height: calc(var(--g) * 24); gap: calc(var(--g) * 8); padding-left: calc(var(--g) * 14); font-size: calc(var(--g) * 9); border-radius: calc(var(--g) * 12); margin-top: calc(var(--g) * 16); }
+    .more i { width: calc(var(--g) * 18); height: calc(var(--g) * 18); }
+  }
+</style>

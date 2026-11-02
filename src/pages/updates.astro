@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+import UpdatesHeader from '../components/UpdatesHeader.astro';
+import UpdateFeature from '../components/UpdateFeature.astro';
+import UpdateCards from '../components/UpdateCards.astro';
+import UpdateNotices from '../components/UpdateNotices.astro';
+import { getUpdates } from '../data/updates';
+
+const { featured, cards, notices } = await getUpdates();
+---
+<Layout title="Updates | Sibaq National Arts Fest 26">
+  <div class="upd">
+    <div class="wrap">
+    <UpdatesHeader />
+    <main>
+      <UpdateFeature update={featured} />
+      <UpdateCards cards={cards} />
+      <UpdateNotices notices={notices} />
+      <div class="dots" aria-hidden="true"></div>
+    </main>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .upd {
+    --g: calc(100cqw / 783);
+    position: relative;
+    isolation: isolate;
+  }
+  /* faint multicolour fingerprint pattern behind the whole page, same as the gallery */
+  .upd::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(160deg, #e8501f 0%, #f3b91a 28%, #5cbf7b 52%, #f3b91a 74%, #e8501f 100%);
+    -webkit-mask: url('/images/pattern-fingerprint.png') center top / 100% auto repeat-y;
+    mask: url('/images/pattern-fingerprint.png') center top / 100% auto repeat-y;
+    -webkit-mask-image: image-set(url('/images/pattern-fingerprint.webp') type('image/webp'), url('/images/pattern-fingerprint.png') type('image/png'));
+    mask-image: image-set(url('/images/pattern-fingerprint.webp') type('image/webp'), url('/images/pattern-fingerprint.png') type('image/png'));
+    opacity: 0.17;
+  }
+  .wrap, main { display: block; }
+  main { padding-bottom: calc(var(--g) * 20); }
+  .dots {
+    height: calc(var(--g) * 8);
+    margin: calc(var(--g) * 70) calc(var(--g) * 45) 0;
+    background: url('/images/nukta-pattern.svg') center / contain no-repeat;
+    animation: rise-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 1.3s both;
+  }
+
+  /* desktop: same content width and scale as the gallery / downloads panels */
+  @media (min-width: 641px) {
+    .wrap {
+      --g: calc(var(--hu) * 791 / 783);
+      max-width: calc(var(--g) * 783);
+      margin-inline: auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .upd { --g: calc(100cqw / 402); }
+    .dots { margin: calc(var(--g) * 40) calc(var(--g) * 45) 0; height: calc(var(--g) * 5); }
+  }
+</style>

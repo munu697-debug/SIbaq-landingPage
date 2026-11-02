@@ -1,0 +1,94 @@
+@font-face {
+  font-family: 'Azurio';
+  src: url('./AZURIO/AzurioTrial-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Azurio';
+  src: url('./AZURIO/AzurioTrial-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Azurio';
+  src: url('./AZURIO/AzurioTrial-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Azurio';
+  src: url('./AZURIO/AzurioTrial-Semibold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Azurio';
+  src: url('./AZURIO/AzurioTrial-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Azurio';
+  src: url('./AZURIO/AzurioTrial-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --red: #e64e24;
+  --yellow: #f3b91a;
+  --grey: #efefef;
+  --ink: #2b2b2b;
+  --u: calc(100cqw / 830);
+  --hu: min(calc(100cqw / 830), calc(80svh / 410));
+  /* wide-screen content width: page minus the same x margin everywhere */
+  --hw: calc(100cqw - 100cqw / 830 * 84);
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { background: #fff; scroll-behavior: smooth; }
+
+/* shared easing so every interactive element animates the same way */
+a, button, input { transition: color 0.25s ease, background-color 0.25s ease, transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, opacity 0.25s ease; }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+@keyframes rise-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0s !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
+}
+
+body {
+  font-family: 'Azurio', 'Playfair Display', Georgia, serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  animation: page-in 0.5s ease both;
+}
+
+img { display: block; max-width: 100%; }
+picture { display: contents; }
+/* second plan: while an image is slow or has failed, its box stays quiet instead of showing a broken icon */
+img[data-failed] { visibility: hidden; }
+a { color: inherit; text-decoration: none; }
+
+.page {
+  container-type: inline-size;
+  width: 100%;
+  margin-inline: auto;
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  :root { --u: calc(100cqw / 402); }
+}

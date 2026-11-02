@@ -1,0 +1,81 @@
+---
+import HeroFrame from './HeroFrame.astro';
+---
+<HeroFrame title="Downloads" patternOpacity={0.5}>
+  <div class="diamonds"><i></i><i></i></div>
+  <picture><source srcset="/images/mark-yellow.webp" type="image/webp" /><img class="bracket" src="/images/mark-yellow.png" alt="" decoding="async" /></picture>
+  <picture><source srcset="/images/building.webp" type="image/webp" /><img class="building" src="/images/building.png" alt="Darul Huda Islamic University" decoding="async" fetchpriority="high" /></picture>
+
+  <div slot="over" class="badge">
+    <svg viewBox="0 0 200 200" role="img" aria-label="Darul Huda Sibaq National Arts Fest '26">
+      <circle cx="100" cy="100" r="100" fill="#f3b91a" />
+      <path id="badge-path" d="M 30,100 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0" fill="none" />
+      <text class="ring-text" font-size="20" font-weight="700" fill="#2b2b2b" font-family="Azurio, Playfair Display, serif">
+        <textPath href="#badge-path" textLength="432" lengthAdjust="spacing">NATIONAL ARTS FEST '26 DARUL HUDA SIBAQ</textPath>
+      </text>
+      <circle cx="100" cy="100" r="54" fill="#e8501f" />
+      <image href="/images/mark-white.webp" x="76" y="62" width="48" height="76" preserveAspectRatio="xMidYMid meet" />
+    </svg>
+  </div>
+</HeroFrame>
+
+<style>
+  .diamonds {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(var(--hu) * (var(--hh) - 303));
+    display: flex;
+    gap: calc(var(--hu) * 14);
+  }
+  .diamonds i {
+    width: calc(var(--hu) * 30);
+    height: calc(var(--hu) * 30);
+    background: #fff;
+    transform: rotate(45deg);
+  }
+  .bracket {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(var(--hu) * (var(--hh) - 283));
+    width: calc(var(--hu) * 265);
+  }
+  .building {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: max(calc(var(--hu) * 930), 100%);
+    max-width: none;
+    transform: translateX(-50%);
+    animation: rise 1.1s cubic-bezier(0.22, 0.8, 0.25, 1) both;
+  }
+  .badge {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(var(--hu) * (var(--hh) - 131));
+    width: calc(var(--hu) * 112);
+    height: calc(var(--hu) * 112);
+    border-radius: 50%;
+    animation: pop 0.6s ease 0.9s both;
+  }
+  .badge svg { width: 100%; height: 100%; display: block; }
+  .ring-text {
+    transform-box: view-box;
+    transform-origin: 50% 50%;
+    animation: ring-spin 18s linear infinite;
+  }
+  @keyframes rise {
+    from { transform: translate(-50%, 105%); }
+    to { transform: translate(-50%, 0); }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: translateX(-50%) scale(0.6); }
+    to { opacity: 1; transform: translateX(-50%) scale(1); }
+  }
+  @keyframes ring-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .building, .badge, .ring-text { animation: none; }
+  }
+</style>

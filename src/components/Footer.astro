@@ -1,0 +1,87 @@
+---
+const socials = [
+  { name: 'Facebook', c: '#e8501f', path: 'M13.5 21v-7h2.4l.4-3h-2.8V9.2c0-.9.3-1.4 1.5-1.4h1.4V5.2c-.3 0-1.1-.1-2.1-.1-2.1 0-3.6 1.3-3.6 3.7V11H8.3v3h2.4v7z' },
+  { name: 'Instagram', c: '#f08a1c', path: 'M8 4h8a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4zm4 4.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm4.3-1.8a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z' },
+  { name: 'Phone', c: '#f3b91a', path: 'M7 4l3 .5 1 3-1.8 1.3a11 11 0 0 0 5 5L15.5 12l3 1 .5 3a2 2 0 0 1-2 2A13 13 0 0 1 5 6a2 2 0 0 1 2-2z' },
+  { name: 'YouTube', c: '#e8501f', path: 'M20.5 8.2a2.3 2.3 0 0 0-1.6-1.6C17.5 6.2 12 6.2 12 6.2s-5.500 0-6.900.4A2.300 2.300 0 0 0 3.500 8.200 24 24 0 0 0 3.200 12c0 1.300.1 2.600.3 3.800a2.300 2.300 0 0 0 1.600 1.600c1.400.4 6.900.4 6.900.4s5.500 0 6.900-.4a2.300 2.300 0 0 0 1.600-1.600c.2-1.200.3-2.500.3-3.800s-.1-2.600-.3-3.800zM10 14.800V9.200l4.600 2.800z' },
+];
+---
+<footer class="ftr">
+  <div class="left">
+    <picture><source srcset="/images/footer-brand.webp" type="image/webp" /><img class="brand" src="/images/footer-brand.png" alt="Make it your own - Darul Huda Sibaq National Arts Fest '26" decoding="async" /></picture>
+    <p class="addr">Darul Huda Islamic University, Hidaya Nagar, Chermand, Tirurangadi PO, Malappuram Dist. Pin: 676306, Kerala, India</p>
+    <p class="copy">© All rights reserved | Sibaq Committee 2026</p>
+  </div>
+
+  <form class="right" onsubmit="return false">
+    <div class="social">
+      {socials.map((s) => (
+        <a href="#" aria-label={s.name} style={`background:${s.c}`}>
+          <svg viewBox="0 0 24 24" fill="#fff"><path d={s.path} /></svg>
+        </a>
+      ))}
+    </div>
+    <input type="email" placeholder="Enter Your Email" aria-label="Email" />
+    <button type="submit">Subscribe</button>
+  </form>
+
+  <picture><source srcset="/images/wave.webp" type="image/webp" /><img class="wave" src="/images/wave.png" alt="" decoding="async" loading="lazy" /></picture>
+</footer>
+
+<style>
+  .ftr {
+    position: relative;
+    margin-top: calc(var(--u) * 28);
+    height: calc(var(--u) * 175 + 15cqw);
+  }
+  .left { position: absolute; left: calc(var(--u) * 55); top: calc(var(--u) * 24); width: calc(var(--u) * 260); }
+  .brand { width: calc(var(--u) * 205); }
+  .addr, .copy { font-size: calc(var(--u) * 10.5); line-height: 1.25; color: #222; }
+  .addr { margin-top: calc(var(--u) * 20); }
+  .copy { margin-top: calc(var(--u) * 17); }
+  .right { position: absolute; right: calc(var(--u) * 70); top: calc(var(--u) * 22); width: calc(var(--u) * 136); }
+  .social { display: flex; gap: calc(var(--u) * 2); margin-bottom: calc(var(--u) * 8); margin-left: calc(var(--u) * -2); }
+  .social a:hover { transform: translateY(-3px) scale(1.08); }
+  .social a:active { transform: scale(0.95); }
+  .social a { width: calc(var(--u) * 28); height: calc(var(--u) * 28); border-radius: 50%; display: grid; place-items: center; }
+  .social svg { width: 62%; }
+  input, button {
+    display: block;
+    width: 100%;
+    height: calc(var(--u) * 21);
+    border: 0;
+    border-radius: calc(var(--u) * 4);
+    font-family: inherit;
+    font-size: calc(var(--u) * 9.5);
+    text-align: center;
+  }
+  input { background: #ddd; color: #333; }
+  input::placeholder { color: #aaa; transition: opacity 0.25s ease; }
+  input:focus { background: #e6e6e6; box-shadow: 0 0 0 2px var(--red); outline: none; }
+  input:focus::placeholder { opacity: 0; }
+  button { margin-top: calc(var(--u) * 8); background: var(--red); color: #fff; font-weight: 700; cursor: pointer; }
+  button:hover { background: #cf431b; transform: translateY(-2px); }
+  button:active { transform: scale(0.97); }
+  .wave {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+  }
+  @media (max-width: 640px) {
+    .ftr { height: auto; margin-top: calc(var(--u) * 40); padding-bottom: calc(var(--u) * 260); }
+    .left, .right { position: static; width: auto; }
+    .brand { width: calc(var(--u) * 230); margin: 0 auto; }
+    .addr, .copy { text-align: center; font-size: calc(var(--u) * 11); padding: 0 calc(var(--u) * 40); }
+    .addr { margin-top: calc(var(--u) * 22); }
+    .copy { margin-top: calc(var(--u) * 14); }
+    .right { width: calc(var(--u) * 182); margin: calc(var(--u) * 30) auto 0; }
+    .social { justify-content: center; gap: calc(var(--u) * 12); margin: 0 0 calc(var(--u) * 14); }
+    .social a { width: calc(var(--u) * 36); height: calc(var(--u) * 36); }
+    input, button { height: calc(var(--u) * 28); border-radius: calc(var(--u) * 14); font-size: calc(var(--u) * 12); }
+    button { margin-top: calc(var(--u) * 10); }
+    .wave { height: calc(var(--u) * 240); object-fit: cover; object-position: 62% bottom; }
+  }
+</style>

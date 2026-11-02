@@ -1,0 +1,159 @@
+---
+const links = [
+  { label: 'Home', href: '/' },
+  { label: 'Downloads', href: '/downloads' },
+  { label: 'Result', href: '#' },
+  { label: 'Updates', href: '/updates' },
+  { label: 'Gallery', href: '/gallery' },
+];
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+<div class="menu" id="site-menu" aria-hidden="true">
+  <button class="close" type="button" aria-label="Close menu" tabindex="-1"><i></i><i></i></button>
+  <nav class="panel">
+    {links.map((l, i) => (
+      <a
+        class={`item ${i % 2 === 0 ? 'red' : 'ink'}`}
+        href={l.href}
+        style={`--i:${i}`}
+        aria-current={l.href === current ? 'page' : undefined}
+        tabindex="-1"
+      >
+        {i % 2 === 0 && (
+          <svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" /><path d="M5 10h9M10.5 6l4 4-4 4" /></svg>
+        )}
+        <span>{l.label}</span>
+        {i % 2 === 1 && (
+          <svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="10" /><path d="M15 10H6M9.5 6l-4 4 4 4" /></svg>
+        )}
+      </a>
+    ))}
+  </nav>
+</div>
+
+<style>
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgb(0 0 0 / 0.16);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+  }
+  .menu.open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease;
+  }
+  /* sized by its content, tucked under the menu button */
+  .panel {
+    position: absolute;
+    top: var(--top, 12px);
+    right: var(--right, 12px);
+    max-width: calc(100vw - 24px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    padding: 70px 34px 34px;
+    background: #fff;
+    border-radius: 26px;
+    box-shadow: 0 12px 40px rgb(0 0 0 / 0.18);
+    transform-origin: top right;
+    transform: scale(0.85);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .menu.open .panel { transform: none; }
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 17px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.35s ease, transform 0.35s ease, letter-spacing 0.25s ease;
+  }
+  .menu.open .item {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(0.08s + var(--i) * 0.06s), calc(0.08s + var(--i) * 0.06s), 0s;
+  }
+  .item:hover { letter-spacing: 0.4em; }
+  .red { color: var(--red); }
+  .ink { color: #111; }
+  .item[aria-current='page'] span { text-decoration: underline; text-underline-offset: 6px; }
+  .ic { width: 0.72em; height: 0.72em; flex: none; }
+  .ic circle { fill: var(--red); }
+  .ic path { fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* stands in for the header button while the menu covers it */
+  .close {
+    position: fixed;
+    z-index: 1;
+    top: calc(var(--top, 12px) + 14px);
+    right: calc(var(--right, 12px) + 14px);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1.6px solid #f7931e;
+    background: transparent;
+    cursor: pointer;
+    transform: rotate(-90deg) scale(0.6);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.3s ease;
+  }
+  .menu.open .close { transform: none; opacity: 1; transition-delay: 0.1s; }
+  .close i {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 40%;
+    height: 2px;
+    border-radius: 2px;
+    background: #f7931e;
+  }
+  .close i:nth-child(1) { transform: translate(-50%, -50%) rotate(45deg); }
+  .close i:nth-child(2) { transform: translate(-50%, -50%) rotate(-45deg); }
+</style>
+
+<script>
+  // document/window listeners outlive a page swap, so drop the previous page's before re-binding
+  let ctrl: AbortController | undefined;
+  document.addEventListener('astro:page-load', () => {
+  ctrl?.abort();
+  ctrl = new AbortController();
+  const { signal } = ctrl;
+  const menu = document.getElementById('site-menu');
+  const toggle = document.querySelector<HTMLElement>('[data-menu-toggle]');
+  if (menu && toggle) {
+    // the page container clips fixed children, so mount the overlay on <body>
+    document.body.appendChild(menu);
+    const close = menu.querySelector<HTMLElement>('.close')!;
+    const links = menu.querySelectorAll<HTMLElement>('.item');
+
+    const place = () => {
+      const r = toggle.getBoundingClientRect();
+      const pad = 10;
+      menu.style.setProperty('--top', `${Math.max(r.top - pad, 8)}px`);
+      menu.style.setProperty('--right', `${Math.max(menu.clientWidth - r.right - pad, 8)}px`);
+    };
+    const setOpen = (open: boolean) => {
+      if (open) place();
+      menu.classList.toggle('open', open);
+      menu.setAttribute('aria-hidden', String(!open));
+      toggle.setAttribute('aria-expanded', String(open));
+            links.forEach((a) => (a.tabIndex = open ? 0 : -1));
+      close.tabIndex = open ? 0 : -1;
+    };
+    menu.addEventListener('click', (e) => e.target === menu && setOpen(false));
+    toggle.addEventListener('click', () => setOpen(true));
+    close.addEventListener('click', () => setOpen(false));
+    links.forEach((a) => a.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false), { signal });
+    window.addEventListener('resize', () => menu.classList.contains('open') && place(), { signal });
+  }
+  });
+</script>

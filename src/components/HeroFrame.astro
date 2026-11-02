@@ -1,0 +1,183 @@
+---
+// Shared hero shell: outline, fingerprint backdrop, logo, page tab and menu button.
+// Page artwork goes in the default slot (clipped to the outline); `over` renders above it.
+interface Props { title: string; bowl?: number; bowlX?: number; round?: number; patternOpacity?: number }
+const { title, bowl = 0.19, bowlX = 0.5, round = 0, patternOpacity = 1 } = Astro.props;
+---
+<header class="hdr" data-bowl={bowl} data-bowlx={bowlX} data-round={round} style={`--pattern-opacity:${patternOpacity}`}>
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <defs>
+      <clipPath id="hdr-shape" clipPathUnits="objectBoundingBox">
+        <path d="
+          M0.048,0
+          H0.3976 C0.4086,0 0.4136,0.0522 0.4136,0.0522
+          Q0.4166,0.1044 0.4476,0.1044 H0.5524
+          Q0.5834,0.1044 0.5864,0.0522 C0.5864,0.0522 0.5914,0 0.6024,0
+          H0.952 Q1,0 1,0.099 V0.6919 Q1,0.7728 0.952,0.7728
+          H0.69 C0.62,0.7728 0.58,1 0.5,1
+          C0.42,1 0.38,0.7728 0.31,0.7728
+          H0.048 Q0,0.7728 0,0.6919 V0.099 Q0,0 0.048,0 Z" />
+      </clipPath>
+    </defs>
+  </svg>
+
+  <div class="shape">
+    <div class="bg"></div>
+
+    <picture><source srcset="/images/logo-white.webp" type="image/webp" /><img class="logo" src="/images/logo-white.png" alt="Darul Huda Sibaq National Arts Fest '26" decoding="async" fetchpriority="high" /></picture>
+
+    <slot />
+  </div>
+
+  <h1 class="tab">{title}</h1>
+
+  <slot name="over" />
+
+  <button class="round apps" aria-label="Menu" aria-expanded="false" aria-controls="site-menu" data-menu-toggle type="button">
+    <span class="dm"><i></i><i></i><i></i><i class="o"></i></span>
+  </button>
+</header>
+
+<script>
+  // Rebuild the header outline in px: corners and the centre notch keep their design
+  // size while the body stretches to the available width.
+  document.addEventListener('astro:page-load', () => {
+  const hdr = document.querySelector<HTMLElement>('.hdr');
+  const shape = hdr?.querySelector<HTMLElement>('.shape');
+  const fit = () => {
+    if (!hdr || !shape) return;
+    const W = hdr.clientWidth;
+    const H = hdr.clientHeight;
+    const hh = parseFloat(getComputedStyle(hdr).getPropertyValue('--hh')) || 383;
+    const s = H / hh;
+    const hw = parseFloat(hdr.dataset.bowl ?? '0.19');
+    const e1 = 0.5 + hw, c1 = 0.5 + hw - 0.07, c2 = 0.58, e0 = 0.5 - hw, d2 = 0.42;
+    const bx = parseFloat(hdr.dataset.bowlx ?? '0.5') - 0.5;
+    const XB = (f: number) => (W / 2 + (f - 0.5 + bx) * 791 * s).toFixed(1);
+    const X = (f: number) => (W / 2 + (f - 0.5) * 791 * s).toFixed(1);
+    const L = (f: number) => (f * 791 * s).toFixed(1);
+    const R = (f: number) => (W - (1 - f) * 791 * s).toFixed(1);
+    const Y = (f: number) => (f * H).toFixed(1);
+    // circular notch: radius in design units, concave fillets where it meets the flat edge
+    const rr = parseFloat(hdr.dataset.round ?? '0') * s;
+    const cx = W / 2 + (parseFloat(hdr.dataset.bowlx ?? '0.5') - 0.5) * 791 * s;
+    const fy = H * 0.7728;
+    const yc = H - rr;
+    const dxf = rr ? Math.sqrt(Math.max(rr * rr - (fy - yc) ** 2, 0)) : 0;
+    const fd = 14 * s;
+    const dxp = rr ? Math.sqrt(Math.max(rr * rr - (fy + fd - yc) ** 2, 0)) : 0;
+    const f = (n: number) => n.toFixed(1);
+    const notch = rr
+      ? [
+          `H${f(cx + dxf + 30 * s)} Q${f(cx + dxf + 4 * s)},${f(fy)} ${f(cx + dxp)},${f(fy + fd)}`,
+          `A${f(rr)} ${f(rr)} 0 0 1 ${f(cx - dxp)},${f(fy + fd)}`,
+          `Q${f(cx - dxf - 4 * s)},${f(fy)} ${f(cx - dxf - 30 * s)},${f(fy)}`,
+        ]
+      : [
+          `H${XB(e1)} C${XB(c1)},${Y(0.7728)} ${XB(c2)},${Y(1)} ${XB(0.5)},${Y(1)}`,
+          `C${XB(d2)},${Y(1)} ${XB(1 - c1)},${Y(0.7728)} ${XB(e0)},${Y(0.7728)}`,
+        ];
+    const d = [
+      `M${L(0.048)},0`,
+      `H${X(0.3976)} C${X(0.4086)},0 ${X(0.4136)},${Y(0.0522)} ${X(0.4136)},${Y(0.0522)}`,
+      `Q${X(0.4166)},${Y(0.1044)} ${X(0.4476)},${Y(0.1044)} H${X(0.5524)}`,
+      `Q${X(0.5834)},${Y(0.1044)} ${X(0.5864)},${Y(0.0522)} C${X(0.5864)},${Y(0.0522)} ${X(0.5914)},0 ${X(0.6024)},0`,
+      `H${R(0.952)} Q${R(1)},0 ${R(1)},${Y(0.099)} V${Y(0.6919)} Q${R(1)},${Y(0.7728)} ${R(0.952)},${Y(0.7728)}`,
+      ...notch,
+      `H${L(0.048)} Q${L(0)},${Y(0.7728)} ${L(0)},${Y(0.6919)} V${Y(0.099)} Q${L(0)},0 ${L(0.048)},0 Z`,
+    ].join(' ');
+    shape.style.clipPath = `path('${d}')`;
+  };
+  fit();
+  if (hdr) new ResizeObserver(fit).observe(hdr);
+  });
+</script>
+
+<style>
+  .hdr {
+    position: relative;
+    width: calc(var(--hu) * 791);
+    margin: calc(var(--hu) * 27) auto 0;
+    --hh: 383;
+    height: calc(var(--hu) * var(--hh));
+  }
+  /* desktop: span the page like the footer; height still follows the viewport via --hu */
+  @media (min-width: 641px) {
+    .hdr { width: var(--hw); }
+  }
+  .shape {
+    position: absolute;
+    inset: 0;
+    clip-path: url(#hdr-shape);
+    overflow: hidden;
+  }
+  .bg {
+    position: absolute;
+    inset: 0;
+    background: #e8501f;
+  }
+  .bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('/images/pattern-fingerprint.png') center / cover no-repeat;
+    background-image: image-set(url('/images/pattern-fingerprint.webp') type('image/webp'), url('/images/pattern-fingerprint.png') type('image/png'));
+    opacity: var(--pattern-opacity, 1);
+  }
+  .logo {
+    position: absolute;
+    left: calc(var(--hu) * 52);
+    top: calc(var(--hu) * 33);
+    width: calc(var(--hu) * 111);
+  }
+  .tab {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(var(--hu) * 164);
+    height: calc(var(--hu) * 40);
+    display: grid;
+    place-items: center;
+    font-size: calc(var(--hu) * 17);
+    font-weight: 700;
+    color: var(--red);
+  }
+  .round {
+    position: absolute;
+    right: calc(var(--hu) * 22);
+    width: calc(var(--hu) * 50);
+    height: calc(var(--hu) * 50);
+    border-radius: 50%;
+    border: calc(var(--hu) * 1.6) solid #f7931e;
+    background: transparent;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .apps { top: calc(var(--hu) * 35); }
+  .round { transition: transform 0.25s ease, background-color 0.25s ease; }
+  .round:hover { transform: scale(1.06); background: rgb(247 147 30 / 0.12); }
+  .dm { transition: transform 0.4s ease, opacity 0.25s ease; }
+  .apps[aria-expanded="true"] .dm { transform: rotate(90deg) scale(0.4); opacity: 0; }
+  .dm { position: relative; width: 52%; aspect-ratio: 1; }
+  .dm i {
+    position: absolute;
+    width: 24.7%;
+    height: 24.7%;
+    background: #fff;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  .dm i:nth-child(1) { left: 30%; top: 25%; }
+  .dm i:nth-child(2) { left: 70%; top: 25%; }
+  .dm i:nth-child(3) { left: 30%; top: 70%; }
+  .dm i.o { left: 70%; top: 70%; background: #f7931e; }
+  /* small screens: same composition as desktop, with larger logo and controls so they stay readable */
+  @media (max-width: 640px) {
+    .hdr { width: calc(100cqw - 100cqw / 402 * 24); margin-top: calc(100cqw / 402 * 14); --hu: calc(100cqw / 830); }
+    .logo { left: calc(var(--hu) * 48); top: calc(var(--hu) * 40); width: calc(var(--hu) * 150); }
+    .round { width: calc(var(--hu) * 64); height: calc(var(--hu) * 64); right: calc(var(--hu) * 24); }
+    .apps { top: calc(var(--hu) * 44); }
+    .tab { font-size: calc(var(--hu) * 22); width: calc(var(--hu) * 190); height: calc(var(--hu) * 46); }
+  }
+</style>
